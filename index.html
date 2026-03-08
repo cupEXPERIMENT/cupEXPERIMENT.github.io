@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAHAM — Manajemen Kantor Hukum</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1c2e;
+    --navy-mid: #1a2d45;
+    --navy-light: #243d5c;
+    --gold: #c9a84c;
+    --gold-light: #e4c46a;
+    --gold-pale: #f7efd6;
+    --cream: #faf7f2;
+    --white: #ffffff;
+    --text-main: #1a1a2e;
+    --text-muted: #6b7280;
+    --text-light: #9ca3af;
+    --border: #e5e0d8;
+    --danger: #c0392b;
+    --success: #27ae60;
+    --warning: #e67e22;
+    --info: #2980b9;
+    --sidebar-w: 260px;
+    --header-h: 64px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-main);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+
+  .logo-mark {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 18px;
+    color: var(--navy);
+  }
+
+  .logo-text { color: var(--white); }
+  .logo-text .name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 600;
+    letter-spacing: .5px;
+  }
+  .logo-text .sub { font-size: 10px; color: rgba(255,255,255,.4); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    padding: 8px 20px 4px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.25);
+    font-weight: 600;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all .2s;
+    color: rgba(255,255,255,.55);
+    font-size: 13.5px;
+    font-weight: 400;
+    border-left: 3px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,.04); }
+  .nav-item.active {
+    color: var(--gold-light);
+    background: rgba(201,168,76,.08);
+    border-left-color: var(--gold);
+    font-weight: 500;
+  }
+
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+  }
+
+  .user-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.05);
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .user-card:hover { background: rgba(255,255,255,.09); }
+
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #a07030);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  .user-info .uname { color: var(--white); font-size: 13px; font-weight: 500; }
+  .user-info .urole { color: rgba(255,255,255,.35); font-size: 11px; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: var(--header-h);
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 28px;
+    gap: 16px;
+    position: sticky; top: 0;
+    z-index: 50;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--navy);
+    flex: 1;
+  }
+
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  .search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    width: 240px;
+  }
+  .search-box input {
+    border: none; background: transparent; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text-main); width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text-light); }
+
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; color: var(--text-muted);
+    transition: all .2s; position: relative;
+  }
+  .icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .notif-dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--white);
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 28px;
+    flex: 1;
+    display: none;
+  }
+  .content.active { display: block; }
+
+  /* ── CARDS ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .stat-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,.07); transform: translateY(-2px); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .stat-card.gold::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .stat-card.blue::before { background: linear-gradient(90deg, #2980b9, #3498db); }
+  .stat-card.green::before { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+  .stat-card.red::before { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+  .stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .stat-icon { position: absolute; right: 20px; top: 20px; font-size: 28px; opacity: .12; }
+  .stat-change { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; margin-top: 6px; }
+  .stat-change.up { color: var(--success); }
+  .stat-change.down { color: var(--danger); }
+
+  /* ── SECTION ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 600; color: var(--navy);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all .2s;
+  }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: var(--navy-light); }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: var(--gold-light); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-danger { background: var(--danger); color: var(--white); }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #f9f7f3; }
+  thead th {
+    padding: 12px 18px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .7px;
+    color: var(--text-muted);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: #faf8f5; }
+  tbody td {
+    padding: 13px 18px;
+    font-size: 13.5px;
+    color: var(--text-main);
+    border-bottom: 1px solid #f0ede8;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge-aktif { background: #d4edda; color: #155724; }
+  .badge-selesai { background: #d1ecf1; color: #0c5460; }
+  .badge-pending { background: #fff3cd; color: #856404; }
+  .badge-banding { background: #f8d7da; color: #721c24; }
+  .badge-sidang { background: #e2d9f3; color: #432874; }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+  }
+
+  /* ── ACTIVITY LIST ── */
+  .activity-list { display: flex; flex-direction: column; gap: 14px; }
+  .activity-item { display: flex; align-items: flex-start; gap: 12px; }
+  .activity-dot {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .dot-gold { background: #fdf3d0; }
+  .dot-blue { background: #dbeafe; }
+  .dot-green { background: #d1fae5; }
+  .dot-red { background: #fee2e2; }
+  .activity-text { font-size: 13px; color: var(--text-main); line-height: 1.5; }
+  .activity-time { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  /* ── CALENDAR MINI ── */
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; margin-top: 12px;
+  }
+  .cal-header { font-size: 10px; font-weight: 600; color: var(--text-light); text-align: center; padding: 4px; }
+  .cal-day {
+    font-size: 12px; text-align: center; padding: 5px 2px;
+    border-radius: 6px; cursor: pointer; transition: all .15s;
+    color: var(--text-main);
+  }
+  .cal-day:hover { background: var(--gold-pale); }
+  .cal-day.today { background: var(--navy); color: var(--white); font-weight: 700; }
+  .cal-day.has-event { position: relative; }
+  .cal-day.has-event::after {
+    content: ''; position: absolute;
+    bottom: 2px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 4px; border-radius: 50%; background: var(--gold);
+  }
+  .cal-day.other-month { color: var(--text-light); }
+
+  /* ── FORM STYLES ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: .3px; }
+  input, select, textarea {
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--text-main);
+    background: var(--white);
+    outline: none;
+    transition: border-color .2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 999;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    width: 560px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp .25s ease;
+  }
+  .modal-lg { width: 720px; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--navy); }
+  .modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all .2s; }
+  .modal-close:hover { background: var(--cream); color: var(--danger); }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+  /* ── PROFILE CARD ── */
+  .profile-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 14px; padding: 24px;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .profile-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .profile-name { font-family: 'Playfair Display', serif; font-size: 18px; }
+  .profile-role { color: rgba(255,255,255,.5); font-size: 13px; margin-top: 2px; }
+
+  /* ── INVOICE ── */
+  .invoice-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .invoice-item:last-child { border-bottom: none; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--cream); padding: 4px; border-radius: 10px; width: fit-content; }
+  .tab {
+    padding: 7px 16px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    color: var(--text-muted); transition: all .2s;
+  }
+  .tab.active { background: var(--white); color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+
+  /* ── DOCUMENT CARD ── */
+  .doc-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    transition: box-shadow .2s;
+  }
+  .doc-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+  .doc-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .doc-pdf { background: #fee2e2; }
+  .doc-word { background: #dbeafe; }
+  .doc-xls { background: #d1fae5; }
+  .doc-info .doc-name { font-size: 13.5px; font-weight: 500; color: var(--text-main); }
+  .doc-info .doc-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 9px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-dot {
+    position: absolute; left: -28px; top: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timeline-dot.done { background: var(--gold); }
+  .timeline-title { font-size: 13.5px; font-weight: 500; color: var(--text-main); }
+  .timeline-date { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .timeline-desc { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── FINANCE CHART ── */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; margin-top: 16px; }
+  .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar-wrap { display: flex; gap: 3px; align-items: flex-end; height: 100px; }
+  .bar {
+    width: 14px; border-radius: 4px 4px 0 0;
+    transition: opacity .2s;
+  }
+  .bar:hover { opacity: .75; }
+  .bar-pemasukan { background: var(--navy); }
+  .bar-pengeluaran { background: var(--gold); }
+  .bar-label { font-size: 10px; color: var(--text-light); }
+  .chart-legend { display: flex; gap: 16px; margin-top: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* ── MOBILE TOGGLE ── */
+  .menu-toggle {
+    display: none;
+    width: 38px; height: 38px; border-radius: 8px;
+    border: 1px solid var(--border); background: transparent;
+    font-size: 18px; cursor: pointer; color: var(--navy);
+    align-items: center; justify-content: center;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .menu-toggle { display: flex; }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .content { padding: 16px; }
+  }
+
+  /* ── TOAST ── */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    background: var(--navy); color: var(--white);
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 13.5px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    animation: toastIn .3s ease;
+    max-width: 320px;
+  }
+  .toast.success { border-left: 4px solid var(--success); }
+  .toast.error { border-left: 4px solid var(--danger); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } }
+
+  /* ── MISC ── */
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .gap-2 { display: flex; gap: 8px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-4 { margin-top: 16px; }
+  .fw-600 { font-weight: 600; }
+  .color-gold { color: var(--gold); }
+  .color-navy { color: var(--navy); }
+  .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  .empty-state {
+    text-align: center; padding: 48px 24px;
+    color: var(--text-light);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: .4; }
+  .empty-state p { font-size: 13.5px; }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* progress bar */
+  .progress { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width .6s ease; }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pill { padding: 3px 10px; border-radius: 20px; font-size: 11.5px; background: var(--cream); border: 1px solid var(--border); color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">L</div>
+      <div class="logo-text">
+        <div class="name">PAHAM</div>
+        <div class="sub">Law Firm Management</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Utama</div>
+    <div class="nav-item active" onclick="navigate('dashboard', this)">
+      <span class="icon">⊞</span> Dasbor
+    </div>
+
+    <div class="nav-section-label">Operasional</div>
+    <div class="nav-item" onclick="navigate('kasus', this)">
+      <span class="icon">⚖</span> Manajemen Kasus
+      <span class="nav-badge" id="kasus-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="navigate('klien', this)">
+      <span class="icon">👥</span> Klien
+    </div>
+    <div class="nav-item" onclick="navigate('jadwal', this)">
+      <span class="icon">📅</span> Jadwal & Sidang
+      <span class="nav-badge" id="jadwal-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="navigate('dokumen', this)">
+      <span class="icon">📁</span> Dokumen
+    </div>
+
+    <div class="nav-section-label">Keuangan</div>
+    <div class="nav-item" onclick="navigate('keuangan', this)">
+      <span class="icon">💰</span> Keuangan & Invoice
+    </div>
+    <div class="nav-item" onclick="navigate('honorarium', this)">
+      <span class="icon">📊</span> Honorarium
+    </div>
+
+    <div class="nav-section-label">Tim</div>
+    <div class="nav-item" onclick="navigate('staf', this)">
+      <span class="icon">🏛</span> Staf & Pengacara
+    </div>
+    <div class="nav-item" onclick="navigate('tugas', this)">
+      <span class="icon">✅</span> Tugas
+      <span class="nav-badge" id="tugas-badge">5</span>
+    </div>
+
+    <div class="nav-section-label">Lainnya</div>
+    <div class="nav-item" onclick="navigate('laporan', this)">
+      <span class="icon">📈</span> Laporan
+    </div>
+    <div class="nav-item" onclick="navigate('pengaturan', this)">
+      <span class="icon">⚙</span> Pengaturan
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AH</div>
+      <div class="user-info">
+        <div class="uname">Ahmad Husain, S.H.</div>
+        <div class="urole">Senior Partner</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="page-title" id="page-title">Dasbor</div>
+    <div class="topbar-actions">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Cari kasus, klien...">
+      </div>
+      <div class="icon-btn" onclick="showNotif()">🔔<span class="notif-dot"></span></div>
+      <div class="icon-btn">❓</div>
+    </div>
+  </header>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="content active" id="page-dashboard">
+    <div style="margin-bottom:24px">
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:600;color:var(--navy)">Selamat Datang, Hamasah 👋</div>
+      <div class="page-subtitle">Jumat, 7 Maret 2025 — Berikut ringkasan aktivitas kantor hari ini</div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card gold">
+        <div class="stat-icon">⚖</div>
+        <div class="stat-label">Total Kasus Aktif</div>
+        <div class="stat-value">47</div>
+        <div class="stat-change up">↑ 3 kasus baru bulan ini</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Total Klien</div>
+        <div class="stat-value">124</div>
+        <div class="stat-change up">↑ 8 klien baru</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Pendapatan Bulan Ini</div>
+        <div class="stat-value" style="font-size:22px">Rp 185 Jt</div>
+        <div class="stat-change up">↑ 12% dari bulan lalu</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon">📅</div>
+        <div class="stat-label">Sidang Minggu Ini</div>
+        <div class="stat-value">9</div>
+        <div class="stat-change down">3 sidang besok</div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN -->
+    <div class="three-col">
+      <!-- RECENT CASES -->
+      <div>
+        <div class="section-header">
+          <div class="section-title">Kasus Terbaru</div>
+          <button class="btn btn-outline btn-sm" onclick="navigate('kasus', document.querySelector('[onclick*=kasus]'))">Lihat Semua</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No. Kasus</th>
+                <th>Klien</th>
+                <th>Jenis</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="openKasusDetail('K-2025-047')">
+                <td><span class="fw-600 color-navy">K-2025-047</span></td>
+                <td>PT Maju Bersama</td>
+                <td>Perdata</td>
+                <td><span class="badge badge-aktif">Aktif</span></td>
+              </tr>
+              <tr onclick="openKasusDetail('K-2025-046')">
+                <td><span class="fw-600 color-navy">K-2025-046</span></td>
+                <td>Budi Santoso</td>
+                <td>Pidana</td>
+                <td><span class="badge badge-sidang">Sidang</span></td>
+              </tr>
+              <tr onclick="openKasusDetail('K-2025-045')">
+                <td><span class="fw-600 color-navy">K-2025-045</span></td>
+                <td>CV Sejahtera</td>
+                <td>Niaga</td>
+                <td><span class="badge badge-banding">Banding</span></td>
+              </tr>
+              <tr onclick="openKasusDetail('K-2025-044')">
+                <td><span class="fw-600 color-navy">K-2025-044</span></td>
+                <td>Rina Wulandari</td>
+                <td>Keluarga</td>
+                <td><span class="badge badge-pending">Pending</span></td>
+              </tr>
+              <tr onclick="openKasusDetail('K-2025-043')">
+                <td><span class="fw-600 color-navy">K-2025-043</span></td>
+                <td>PT Nusantara Jaya</td>
+                <td>Perdata</td>
+                <td><span class="badge badge-selesai">Selesai</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <!-- MINI CALENDAR -->
+        <div class="panel" style="margin-bottom:18px">
+          <div class="section-header">
+            <div class="section-title">Maret 2025</div>
+            <div class="gap-2">
+              <button class="btn btn-outline btn-sm">‹</button>
+              <button class="btn btn-outline btn-sm">›</button>
+            </div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-header">Min</div><div class="cal-header">Sen</div><div class="cal-header">Sel</div>
+            <div class="cal-header">Rab</div><div class="cal-header">Kam</div><div class="cal-header">Jum</div><div class="cal-header">Sab</div>
+            <div class="cal-day other-month">23</div><div class="cal-day other-month">24</div><div class="cal-day other-month">25</div>
+            <div class="cal-day other-month">26</div><div class="cal-day other-month">27</div><div class="cal-day other-month">28</div>
+            <div class="cal-day">1</div>
+            <div class="cal-day">2</div><div class="cal-day has-event">3</div><div class="cal-day has-event">4</div>
+            <div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day today">7</div><div class="cal-day">8</div>
+            <div class="cal-day has-event">9</div><div class="cal-day">10</div><div class="cal-day has-event">11</div>
+            <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day has-event">14</div><div class="cal-day">15</div>
+            <div class="cal-day">16</div><div class="cal-day has-event">17</div><div class="cal-day">18</div>
+            <div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day has-event">21</div><div class="cal-day">22</div>
+            <div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div>
+            <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+            <div class="cal-day">30</div><div class="cal-day">31</div>
+          </div>
+        </div>
+
+        <!-- UPCOMING -->
+        <div class="panel">
+          <div class="section-title" style="margin-bottom:14px">Jadwal Mendatang</div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-dot dot-red">📅</div>
+              <div>
+                <div class="activity-text fw-600">Sidang Kasus K-2025-046</div>
+                <div class="activity-text">PN Jakarta Pusat, Ruang 3</div>
+                <div class="activity-time">Besok, 09:00 WIB</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-blue">👤</div>
+              <div>
+                <div class="activity-text fw-600">Konsultasi PT Nusantara</div>
+                <div class="activity-time">9 Mar, 13:00 WIB</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-gold">📋</div>
+              <div>
+                <div class="activity-text fw-600">Deadline Memori Kasasi</div>
+                <div class="activity-time">11 Mar, 17:00 WIB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="two-col">
+      <!-- FINANCIAL CHART -->
+      <div class="panel">
+        <div class="section-header">
+          <div class="section-title">Keuangan 6 Bulan Terakhir</div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:75px"></div>
+              <div class="bar bar-pengeluaran" style="height:45px"></div>
+            </div>
+            <div class="bar-label">Okt</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:88px"></div>
+              <div class="bar bar-pengeluaran" style="height:50px"></div>
+            </div>
+            <div class="bar-label">Nov</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:65px"></div>
+              <div class="bar bar-pengeluaran" style="height:60px"></div>
+            </div>
+            <div class="bar-label">Des</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:95px"></div>
+              <div class="bar bar-pengeluaran" style="height:40px"></div>
+            </div>
+            <div class="bar-label">Jan</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:80px"></div>
+              <div class="bar bar-pengeluaran" style="height:55px"></div>
+            </div>
+            <div class="bar-label">Feb</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap">
+              <div class="bar bar-pemasukan" style="height:100px"></div>
+              <div class="bar bar-pengeluaran" style="height:42px"></div>
+            </div>
+            <div class="bar-label">Mar</div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Pemasukan</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Pengeluaran</div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="panel">
+        <div class="section-title" style="margin-bottom:14px">Aktivitas Terbaru</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-dot dot-green">✅</div>
+            <div>
+              <div class="activity-text"><b>Invoice #INV-0234</b> dibayarkan oleh PT Maju Bersama</div>
+              <div class="activity-time">2 jam lalu</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-blue">📋</div>
+            <div>
+              <div class="activity-text">Dokumen gugatan <b>K-2025-047</b> diupload oleh Dewi S.H.</div>
+              <div class="activity-time">4 jam lalu</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-gold">👤</div>
+            <div>
+              <div class="activity-text">Klien baru <b>Siti Rahayu</b> didaftarkan</div>
+              <div class="activity-time">Kemarin, 15:30</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-red">⚖</div>
+            <div>
+              <div class="activity-text">Status kasus <b>K-2025-043</b> diperbarui ke Selesai</div>
+              <div class="activity-time">Kemarin, 11:00</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-blue">💰</div>
+            <div>
+              <div class="activity-text">Invoice <b>#INV-0233</b> diterbitkan untuk CV Sejahtera</div>
+              <div class="activity-time">2 hari lalu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KASUS ═══ -->
+  <div class="content" id="page-kasus">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Manajemen Kasus</div>
+        <div class="page-subtitle">47 kasus aktif · 12 selesai bulan ini</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-tambah-kasus')">+ Tambah Kasus</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'tab-semua')">Semua (47)</div>
+      <div class="tab" onclick="switchTab(this,'tab-aktif')">Aktif (32)</div>
+      <div class="tab" onclick="switchTab(this,'tab-sidang')">Sidang (8)</div>
+      <div class="tab" onclick="switchTab(this,'tab-selesai')">Selesai (7)</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No. Kasus</th>
+            <th>Klien</th>
+            <th>Jenis Perkara</th>
+            <th>Pengacara</th>
+            <th>Sidang Berikut</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="kasus-tbody">
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer" onclick="openKasusDetail('K-2025-047')">K-2025-047</span></td>
+            <td>PT Maju Bersama</td><td>Perdata</td><td>Hamba Allah, S.H.</td>
+            <td>14 Mar 2025</td><td><span class="badge badge-aktif">Aktif</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm" onclick="openKasusDetail('K-2025-047')">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b" onclick="showToast('Kasus dihapus','error')">Hapus</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer">K-2025-046</span></td>
+            <td>Budi Santoso</td><td>Pidana</td><td>Hamba Allah, S.H.</td>
+            <td>8 Mar 2025</td><td><span class="badge badge-sidang">Sidang</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b">Hapus</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer">K-2025-045</span></td>
+            <td>CV Sejahtera</td><td>Niaga</td><td>Hamba Allah, S.H.</td>
+            <td>17 Mar 2025</td><td><span class="badge badge-banding">Banding</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b">Hapus</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer">K-2025-044</span></td>
+            <td>Rina Wulandari</td><td>Keluarga</td><td>Hamasah Tsabitah, S.H.</td>
+            <td>-</td><td><span class="badge badge-pending">Pending</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b">Hapus</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer">K-2025-043</span></td>
+            <td>PT Nusantara Jaya</td><td>Perdata</td><td>Agung, S.H.</td>
+            <td>-</td><td><span class="badge badge-selesai">Selesai</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b">Hapus</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="fw-600 color-navy" style="cursor:pointer">K-2025-042</span></td>
+            <td>Joko Prabowo</td><td>Pidana</td><td>Hamba Allah, S.H.</td>
+            <td>21 Mar 2025</td><td><span class="badge badge-aktif">Aktif</span></td>
+            <td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-sm" style="background:#fee2e2;color:#991b1b">Hapus</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ KLIEN ═══ -->
+  <div class="content" id="page-klien">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Data Klien</div>
+        <div class="page-subtitle">12 klien terdaftar</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-tambah-klien')">+ Tambah Klien</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Nama/Perusahaan</th><th>Tipe</th><th>No. Telepon</th><th>Email</th><th>Kasus Aktif</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="fw-600">PT Maju Bersama</span></td><td>Korporasi</td><td>021-5551234</td><td>legal@majubersama.co.id</td><td>2</td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-outline btn-sm">Invoice</button></div></td></tr>
+          <tr><td><span class="fw-600">Budi Santoso</span></td><td>Individu</td><td>0812-3456-7890</td><td>budi@email.com</td><td>1</td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-outline btn-sm">Invoice</button></div></td></tr>
+          <tr><td><span class="fw-600">CV Sejahtera</span></td><td>Korporasi</td><td>022-4445566</td><td>admin@sejahtera.com</td><td>1</td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-outline btn-sm">Invoice</button></div></td></tr>
+          <tr><td><span class="fw-600">Rina Wulandari</span></td><td>Individu</td><td>0857-9876-5432</td><td>rina.w@gmail.com</td><td>1</td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-outline btn-sm">Invoice</button></div></td></tr>
+          <tr><td><span class="fw-600">PT Nusantara Jaya</span></td><td>Korporasi</td><td>021-7778899</td><td>corp@nusantarajaya.id</td><td>0</td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Detail</button><button class="btn btn-outline btn-sm">Invoice</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ JADWAL ═══ -->
+  <div class="content" id="page-jadwal">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Jadwal & Sidang</div>
+        <div class="page-subtitle">9 jadwal minggu ini</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-tambah-jadwal')">+ Tambah Jadwal</button>
+    </div>
+    <div class="two-col">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Kegiatan</th><th>Kasus</th><th>Lokasi</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><b>8 Mar</b><br><small>09:00</small></td><td>Sidang Pembacaan Dakwaan</td><td>K-2025-046</td><td>PN Jak Pusat</td><td><span class="badge badge-sidang">Besok</span></td></tr>
+            <tr><td><b>9 Mar</b><br><small>13:00</small></td><td>Konsultasi Klien</td><td>K-2025-047</td><td>Kantor</td><td><span class="badge badge-aktif">Konfirm</span></td></tr>
+            <tr><td><b>11 Mar</b><br><small>17:00</small></td><td>Deadline Memori Kasasi</td><td>K-2025-045</td><td>-</td><td><span class="badge badge-pending">Pending</span></td></tr>
+            <tr><td><b>14 Mar</b><br><small>10:00</small></td><td>Mediasi Perkara Perdata</td><td>K-2025-047</td><td>BPSK</td><td><span class="badge badge-aktif">Konfirm</span></td></tr>
+            <tr><td><b>17 Mar</b><br><small>09:30</small></td><td>Sidang Pemeriksaan</td><td>K-2025-045</td><td>PN Jak Selatan</td><td><span class="badge badge-aktif">Konfirm</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="section-title" style="margin-bottom:16px">Pengingat Deadline</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-dot dot-red">⏰</div>
+            <div>
+              <div class="activity-text fw-600">Memori Kasasi K-2025-045</div>
+              <div class="activity-text">Tenggat: 11 Maret 2025</div>
+              <div class="progress" style="margin-top:6px"><div class="progress-bar" style="width:85%;background:linear-gradient(90deg,#e74c3c,#c0392b)"></div></div>
+              <div class="activity-time" style="margin-top:4px">4 hari lagi</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-gold">📋</div>
+            <div>
+              <div class="activity-text fw-600">Gugatan Balasan K-2025-042</div>
+              <div class="activity-text">Tenggat: 20 Maret 2025</div>
+              <div class="progress" style="margin-top:6px"><div class="progress-bar" style="width:45%"></div></div>
+              <div class="activity-time" style="margin-top:4px">13 hari lagi</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-blue">📄</div>
+            <div>
+              <div class="activity-text fw-600">Perpanjangan Kuasa Hukum</div>
+              <div class="activity-text">Klien: CV Sejahtera</div>
+              <div class="progress" style="margin-top:6px"><div class="progress-bar" style="width:20%"></div></div>
+              <div class="activity-time" style="margin-top:4px">28 hari lagi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DOKUMEN ═══ -->
+  <div class="content" id="page-dokumen">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Arsip Dokumen</div>
+        <div class="page-subtitle">234 dokumen tersimpan</div>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('Fitur upload dokumen aktif','success')">📎 Upload Dokumen</button>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'d-semua')">Semua</div>
+      <div class="tab" onclick="switchTab(this,'d-gugatan')">Gugatan</div>
+      <div class="tab" onclick="switchTab(this,'d-kontrak')">Kontrak</div>
+      <div class="tab" onclick="switchTab(this,'d-putusan')">Putusan</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
+      <div class="doc-card"><div class="doc-icon doc-pdf">📄</div><div class="doc-info"><div class="doc-name">Surat Gugatan K-2025-047.pdf</div><div class="doc-meta">PT Maju Bersama · 2.4 MB · 5 Mar 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+      <div class="doc-card"><div class="doc-icon doc-word">📝</div><div class="doc-info"><div class="doc-name">Memori Banding K-2025-045.docx</div><div class="doc-meta">CV Sejahtera · 1.1 MB · 3 Mar 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+      <div class="doc-card"><div class="doc-icon doc-pdf">📄</div><div class="doc-info"><div class="doc-name">Putusan PN K-2025-040.pdf</div><div class="doc-meta">PT Nusantara · 890 KB · 28 Feb 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+      <div class="doc-card"><div class="doc-icon doc-xls">📊</div><div class="doc-info"><div class="doc-name">Rekapitulasi Bukti K-2025-046.xlsx</div><div class="doc-meta">Budi Santoso · 340 KB · 27 Feb 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+      <div class="doc-card"><div class="doc-icon doc-word">📝</div><div class="doc-info"><div class="doc-name">Kontrak Jasa Hukum - Rina W.docx</div><div class="doc-meta">Rina Wulandari · 520 KB · 20 Feb 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+      <div class="doc-card"><div class="doc-icon doc-pdf">📄</div><div class="doc-info"><div class="doc-name">Dakwaan K-2025-046.pdf</div><div class="doc-meta">Budi Santoso · 1.8 MB · 15 Feb 2025</div></div><button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+    </div>
+  </div>
+
+  <!-- ═══ KEUANGAN ═══ -->
+  <div class="content" id="page-keuangan">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Keuangan & Invoice</div>
+        <div class="page-subtitle">Maret 2025</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-buat-invoice')">+ Buat Invoice</button>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card green"><div class="stat-icon">💰</div><div class="stat-label">Total Pemasukan</div><div class="stat-value" style="font-size:24px">Rp 185.000.000</div><div class="stat-change up">↑ 12% dari Feb</div></div>
+      <div class="stat-card red"><div class="stat-icon">📤</div><div class="stat-label">Total Pengeluaran</div><div class="stat-value" style="font-size:24px">Rp 42.500.000</div><div class="stat-change up">↑ 5%</div></div>
+      <div class="stat-card gold"><div class="stat-icon">📊</div><div class="stat-label">Laba Bersih</div><div class="stat-value" style="font-size:24px">Rp 142.500.000</div><div class="stat-change up">↑ 18%</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No. Invoice</th><th>Klien</th><th>Kasus</th><th>Jumlah</th><th>Tgl Terbit</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td class="fw-600 color-navy">INV-0234</td><td>PT Maju Bersama</td><td>K-2025-047</td><td>Rp 35.000.000</td><td>5 Mar 2025</td><td><span class="badge badge-selesai">Lunas</span></td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Lihat</button><button class="btn btn-outline btn-sm">Print</button></div></td></tr>
+          <tr><td class="fw-600 color-navy">INV-0233</td><td>CV Sejahtera</td><td>K-2025-045</td><td>Rp 28.500.000</td><td>3 Mar 2025</td><td><span class="badge badge-pending">Menunggu</span></td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Lihat</button><button class="btn btn-outline btn-sm">Kirim</button></div></td></tr>
+          <tr><td class="fw-600 color-navy">INV-0232</td><td>Budi Santoso</td><td>K-2025-046</td><td>Rp 15.000.000</td><td>28 Feb 2025</td><td><span class="badge badge-selesai">Lunas</span></td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Lihat</button><button class="btn btn-outline btn-sm">Print</button></div></td></tr>
+          <tr><td class="fw-600 color-navy">INV-0231</td><td>PT Nusantara Jaya</td><td>K-2025-043</td><td>Rp 55.000.000</td><td>20 Feb 2025</td><td><span class="badge badge-banding">Terlambat</span></td><td><div class="gap-2"><button class="btn btn-outline btn-sm">Lihat</button><button class="btn btn-gold btn-sm">Tagih</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ HONORARIUM ═══ -->
+  <div class="content" id="page-honorarium">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Honorarium Pengacara</div>
+        <div class="page-subtitle">Rekap gaji & fee Maret 2025</div>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('Laporan honorarium diproses','success')">Export Excel</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nama Pengacara</th><th>Jabatan</th><th>Kasus Ditangani</th><th>Gaji Pokok</th><th>Fee Kasus</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="fw-600">Ahmad Husain, S.H.</td><td>Senior Partner</td><td>18</td><td>Rp 25.000.000</td><td>Rp 40.000.000</td><td class="fw-600 color-navy">Rp 65.000.000</td><td><span class="badge badge-selesai">Dibayar</span></td></tr>
+          <tr><td class="fw-600">Dewi Maharani, S.H.</td><td>Associate</td><td>12</td><td>Rp 15.000.000</td><td>Rp 22.000.000</td><td class="fw-600 color-navy">Rp 37.000.000</td><td><span class="badge badge-selesai">Dibayar</span></td></tr>
+          <tr><td class="fw-600">Rudi Hartono, S.H.</td><td>Junior Partner</td><td>9</td><td>Rp 18.000.000</td><td>Rp 15.000.000</td><td class="fw-600 color-navy">Rp 33.000.000</td><td><span class="badge badge-pending">Proses</span></td></tr>
+          <tr><td class="fw-600">Siti Aminah, S.H.</td><td>Associate</td><td>8</td><td>Rp 12.000.000</td><td>Rp 10.000.000</td><td class="fw-600 color-navy">Rp 22.000.000</td><td><span class="badge badge-pending">Proses</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ STAF ═══ -->
+  <div class="content" id="page-staf">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Staf & Pengacara</div>
+        <div class="page-subtitle">12 anggota tim aktif</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-tambah-staf')">+ Tambah Staf</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+      <div class="panel" style="text-align:center">
+        <div class="profile-avatar" style="margin:0 auto 12px">AH</div>
+        <div class="fw-600" style="font-size:15px;color:var(--navy)">Agung, S.H.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Senior Partner</div>
+        <div class="pill-row" style="justify-content:center;margin-top:10px">
+          <span class="pill">Pidana</span><span class="pill">Perdata</span>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-around;font-size:12px;color:var(--text-muted)">
+          <div><b style="font-size:18px;color:var(--navy)">18</b><br>Kasus</div>
+          <div><b style="font-size:18px;color:var(--navy)">12</b><br>Tahun</div>
+        </div>
+      </div>
+      <div class="panel" style="text-align:center">
+        <div class="profile-avatar" style="margin:0 auto 12px;background:linear-gradient(135deg,#2980b9,#3498db)">DM</div>
+        <div class="fw-600" style="font-size:15px;color:var(--navy)">Hamasah Tsabitah, S.H.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Associate</div>
+        <div class="pill-row" style="justify-content:center;margin-top:10px">
+          <span class="pill">Keluarga</span><span class="pill">Pidana</span>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-around;font-size:12px;color:var(--text-muted)">
+          <div><b style="font-size:18px;color:var(--navy)">12</b><br>Kasus</div>
+          <div><b style="font-size:18px;color:var(--navy)">6</b><br>Tahun</div>
+        </div>
+      </div>
+      <div class="panel" style="text-align:center">
+        <div class="profile-avatar" style="margin:0 auto 12px;background:linear-gradient(135deg,#27ae60,#2ecc71)">RH</div>
+        <div class="fw-600" style="font-size:15px;color:var(--navy)">Rudi, S.H.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Junior Partner</div>
+        <div class="pill-row" style="justify-content:center;margin-top:10px">
+          <span class="pill">Niaga</span><span class="pill">Perdata</span>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-around;font-size:12px;color:var(--text-muted)">
+          <div><b style="font-size:18px;color:var(--navy)">9</b><br>Kasus</div>
+          <div><b style="font-size:18px;color:var(--navy)">8</b><br>Tahun</div>
+        </div>
+      </div>
+      <div class="panel" style="text-align:center">
+        <div class="profile-avatar" style="margin:0 auto 12px;background:linear-gradient(135deg,#8e44ad,#9b59b6)">SA</div>
+        <div class="fw-600" style="font-size:15px;color:var(--navy)">Hamba Allah, S.H.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Associate</div>
+        <div class="pill-row" style="justify-content:center;margin-top:10px">
+          <span class="pill">Keluarga</span><span class="pill">Perdata</span>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-around;font-size:12px;color:var(--text-muted)">
+          <div><b style="font-size:18px;color:var(--navy)">8</b><br>Kasus</div>
+          <div><b style="font-size:18px;color:var(--navy)">4</b><br>Tahun</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TUGAS ═══ -->
+  <div class="content" id="page-tugas">
+    <div class="flex-between" style="margin-bottom:24px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Daftar Tugas</div>
+        <div class="page-subtitle">5 tugas belum selesai</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-tambah-tugas')">+ Tambah Tugas</button>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="section-title" style="margin-bottom:12px">🔴 Prioritas Tinggi</div>
+        <div style="display:flex;flex-direction:column;gap:10px" id="tugas-list">
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px">
+            <input type="checkbox" style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1">
+              <div class="fw-600">Selesaikan Memori Kasasi K-2025-045</div>
+              <div style="font-size:12px;color:var(--text-muted)">Rudi Hartono · Tenggat: 11 Mar</div>
+            </div>
+            <span class="badge badge-banding">Darurat</span>
+          </div>
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px">
+            <input type="checkbox" style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1">
+              <div class="fw-600">Persiapan sidang K-2025-046</div>
+              <div style="font-size:12px;color:var(--text-muted)">Dewi Maharani · Besok</div>
+            </div>
+            <span class="badge badge-sidang">Mendesak</span>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin:20px 0 12px">🟡 Prioritas Normal</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px">
+            <input type="checkbox" style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1">
+              <div class="fw-600">Update data klien PT Maju Bersama</div>
+              <div style="font-size:12px;color:var(--text-muted)">Ahmad Husain · 14 Mar</div>
+            </div>
+            <span class="badge badge-aktif">Normal</span>
+          </div>
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px">
+            <input type="checkbox" style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1">
+              <div class="fw-600">Buat invoice untuk CV Sejahtera</div>
+              <div style="font-size:12px;color:var(--text-muted)">Admin · 15 Mar</div>
+            </div>
+            <span class="badge badge-aktif">Normal</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title" style="margin-bottom:12px">✅ Selesai</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px;opacity:.6">
+            <input type="checkbox" checked style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1;text-decoration:line-through">
+              <div class="fw-600">Kirim gugatan K-2025-047</div>
+              <div style="font-size:12px;color:var(--text-muted)">Ahmad Husain · 5 Mar</div>
+            </div>
+          </div>
+          <div class="panel" style="padding:14px;display:flex;align-items:center;gap:12px;opacity:.6">
+            <input type="checkbox" checked style="width:18px;height:18px;cursor:pointer">
+            <div style="flex:1;text-decoration:line-through">
+              <div class="fw-600">Bayar honorarium Februari</div>
+              <div style="font-size:12px;color:var(--text-muted)">Admin · 28 Feb</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LAPORAN ═══ -->
+  <div class="content" id="page-laporan">
+    <div style="margin-bottom:24px">
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Laporan</div>
+      <div class="page-subtitle">Ringkasan kinerja kantor</div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="section-title" style="margin-bottom:16px">📊 Kinerja Kasus Q1 2025</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><div class="flex-between"><span style="font-size:13px">Menang</span><span class="fw-600">18 (62%)</span></div><div class="progress mt-2"><div class="progress-bar" style="width:62%;background:linear-gradient(90deg,#27ae60,#2ecc71)"></div></div></div>
+          <div><div class="flex-between"><span style="font-size:13px">Kalah</span><span class="fw-600">7 (24%)</span></div><div class="progress mt-2"><div class="progress-bar" style="width:24%;background:linear-gradient(90deg,#c0392b,#e74c3c)"></div></div></div>
+          <div><div class="flex-between"><span style="font-size:13px">Mediasi/Damai</span><span class="fw-600">4 (14%)</span></div><div class="progress mt-2"><div class="progress-bar" style="width:14%;background:linear-gradient(90deg,#f39c12,#e67e22)"></div></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="section-title" style="margin-bottom:16px">💰 Rekapitulasi Keuangan</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="flex-between"><span style="font-size:13px;color:var(--text-muted)">Total Pemasukan YTD</span><span class="fw-600 color-navy">Rp 485.000.000</span></div>
+          <div class="flex-between"><span style="font-size:13px;color:var(--text-muted)">Total Pengeluaran YTD</span><span class="fw-600" style="color:var(--danger)">Rp 112.000.000</span></div>
+          <div class="divider" style="margin:4px 0"></div>
+          <div class="flex-between"><span style="font-size:14px;font-weight:600;color:var(--navy)">Laba Bersih YTD</span><span class="fw-600 color-gold" style="font-size:16px">Rp 373.000.000</span></div>
+          <div class="flex-between" style="margin-top:4px"><span style="font-size:13px;color:var(--text-muted)">Invoice Belum Dibayar</span><span class="fw-600" style="color:var(--warning)">Rp 83.500.000</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:0">
+      <div class="section-title" style="margin-bottom:16px">📈 Distribusi Jenis Perkara</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div style="text-align:center;padding:16px;background:var(--cream);border-radius:12px"><div style="font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--navy)">18</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Perdata</div></div>
+        <div style="text-align:center;padding:16px;background:var(--cream);border-radius:12px"><div style="font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--navy)">14</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Pidana</div></div>
+        <div style="text-align:center;padding:16px;background:var(--cream);border-radius:12px"><div style="font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--navy)">9</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Niaga</div></div>
+        <div style="text-align:center;padding:16px;background:var(--cream);border-radius:12px"><div style="font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--navy)">6</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Keluarga</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PENGATURAN ═══ -->
+  <div class="content" id="page-pengaturan">
+    <div style="margin-bottom:24px">
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)">Pengaturan</div>
+      <div class="page-subtitle">Konfigurasi sistem dan profil</div>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="panel" style="margin-bottom:18px">
+          <div class="section-title" style="margin-bottom:16px">Profil Kantor</div>
+          <div class="form-group"><label>Nama Kantor</label><input value="PAHAM Law Firm"></div>
+          <div class="form-group"><label>Alamat</label><textarea style="height:60px">Jl. Sudirman No. 123, Jakarta Selatan 12190</textarea></div>
+          <div class="form-group"><label>Telepon</label><input value="021-5559000"></div>
+          <div class="form-group"><label>Email</label><input value="admin@lexcore.co.id"></div>
+          <button class="btn btn-primary" onclick="showToast('Profil kantor disimpan','success')">Simpan Perubahan</button>
+        </div>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:18px">
+          <div class="section-title" style="margin-bottom:16px">Keamanan Akun</div>
+          <div class="form-group"><label>Password Lama</label><input type="password" value="••••••••"></div>
+          <div class="form-group"><label>Password Baru</label><input type="password" placeholder="Masukkan password baru"></div>
+          <div class="form-group"><label>Konfirmasi Password</label><input type="password" placeholder="Ulangi password baru"></div>
+          <button class="btn btn-primary" onclick="showToast('Password berhasil diubah','success')">Update Password</button>
+        </div>
+        <div class="panel">
+          <div class="section-title" style="margin-bottom:16px">Notifikasi</div>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:13.5px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:400;letter-spacing:0;color:var(--text-main)"><input type="checkbox" checked> Pengingat jadwal sidang</label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:400;letter-spacing:0;color:var(--text-main)"><input type="checkbox" checked> Deadline dokumen</label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:400;letter-spacing:0;color:var(--text-main)"><input type="checkbox" checked> Invoice jatuh tempo</label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:400;letter-spacing:0;color:var(--text-main)"><input type="checkbox"> Laporan mingguan</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Modal Tambah Kasus -->
+<div class="modal-overlay" id="modal-tambah-kasus">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Kasus Baru</div>
+      <button class="modal-close" onclick="closeModal('modal-tambah-kasus')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Nomor Kasus</label><input value="K-2025-048" readonly style="background:var(--cream)"></div>
+      <div class="form-group"><label>Klien</label><select><option>-- Pilih Klien --</option><option>PT Maju Bersama</option><option>Budi Santoso</option><option>CV Sejahtera</option><option>Rina Wulandari</option></select></div>
+      <div class="form-group"><label>Jenis Perkara</label><select><option>Perdata</option><option>Pidana</option><option>Niaga</option><option>Keluarga</option><option>TUN</option></select></div>
+      <div class="form-group"><label>Pengacara Penanggung Jawab</label><select><option>Ahmad Husain, S.H.</option><option>Dewi Maharani, S.H.</option><option>Rudi Hartono, S.H.</option><option>Siti Aminah, S.H.</option></select></div>
+      <div class="form-group"><label>Tanggal Masuk</label><input type="date" value="2025-03-07"></div>
+      <div class="form-group"><label>Pengadilan</label><input placeholder="Contoh: PN Jakarta Pusat"></div>
+      <div class="form-group full"><label>Deskripsi Perkara</label><textarea placeholder="Uraian singkat mengenai perkara..."></textarea></div>
+      <div class="form-group"><label>Estimasi Honor (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Status</label><select><option>Aktif</option><option>Pending</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tambah-kasus')">Batal</button>
+      <button class="btn btn-primary" onclick="simpanKasus()">💾 Simpan Kasus</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah Klien -->
+<div class="modal-overlay" id="modal-tambah-klien">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Klien Baru</div>
+      <button class="modal-close" onclick="closeModal('modal-tambah-klien')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Tipe Klien</label><select><option>Individu</option><option>Korporasi</option></select></div>
+      <div class="form-group"><label>Nama Lengkap / Perusahaan</label><input placeholder="Nama klien..."></div>
+      <div class="form-group"><label>No. KTP / NPWP</label><input placeholder="Nomor identitas"></div>
+      <div class="form-group"><label>No. Telepon</label><input placeholder="08xx-xxxx-xxxx"></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="email@domain.com"></div>
+      <div class="form-group"><label>Kota</label><input placeholder="Jakarta"></div>
+      <div class="form-group full"><label>Alamat Lengkap</label><textarea placeholder="Jl. ..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tambah-klien')">Batal</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-tambah-klien');showToast('Klien berhasil ditambahkan','success')">💾 Simpan Klien</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah Jadwal -->
+<div class="modal-overlay" id="modal-tambah-jadwal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Jadwal / Sidang</div>
+      <button class="modal-close" onclick="closeModal('modal-tambah-jadwal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Jenis Kegiatan</label><select><option>Sidang</option><option>Konsultasi Klien</option><option>Mediasi</option><option>Deadline Dokumen</option><option>Rapat Internal</option></select></div>
+      <div class="form-group"><label>Kasus Terkait</label><select><option>-- Pilih Kasus --</option><option>K-2025-047</option><option>K-2025-046</option><option>K-2025-045</option></select></div>
+      <div class="form-group"><label>Tanggal</label><input type="date"></div>
+      <div class="form-group"><label>Jam</label><input type="time"></div>
+      <div class="form-group full"><label>Lokasi / Keterangan</label><input placeholder="Nama pengadilan atau lokasi..."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tambah-jadwal')">Batal</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-tambah-jadwal');showToast('Jadwal ditambahkan','success')">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Buat Invoice -->
+<div class="modal-overlay" id="modal-buat-invoice">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Buat Invoice Baru</div>
+      <button class="modal-close" onclick="closeModal('modal-buat-invoice')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>No. Invoice</label><input value="INV-0235" readonly style="background:var(--cream)"></div>
+      <div class="form-group"><label>Klien</label><select><option>-- Pilih Klien --</option><option>PT Maju Bersama</option><option>Budi Santoso</option><option>CV Sejahtera</option></select></div>
+      <div class="form-group"><label>Kasus Terkait</label><select><option>-- Pilih Kasus --</option><option>K-2025-047</option><option>K-2025-046</option></select></div>
+      <div class="form-group"><label>Tanggal Terbit</label><input type="date" value="2025-03-07"></div>
+      <div class="form-group"><label>Jatuh Tempo</label><input type="date" value="2025-03-21"></div>
+      <div class="form-group"><label>Jumlah (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group full"><label>Keterangan</label><textarea placeholder="Rincian jasa hukum..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-buat-invoice')">Batal</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-buat-invoice');showToast('Invoice INV-0235 dibuat','success')">💾 Terbitkan Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah Staf -->
+<div class="modal-overlay" id="modal-tambah-staf">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Staf Baru</div>
+      <button class="modal-close" onclick="closeModal('modal-tambah-staf')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Nama Lengkap</label><input placeholder="Nama, S.H."></div>
+      <div class="form-group"><label>Jabatan</label><select><option>Senior Partner</option><option>Junior Partner</option><option>Associate</option><option>Paralegal</option><option>Administrasi</option></select></div>
+      <div class="form-group"><label>Email</label><input type="email"></div>
+      <div class="form-group"><label>No. Telepon</label><input></div>
+      <div class="form-group"><label>Spesialisasi</label><input placeholder="Pidana, Perdata, ..."></div>
+      <div class="form-group"><label>Gaji Pokok (Rp)</label><input type="number" placeholder="0"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tambah-staf')">Batal</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-tambah-staf');showToast('Staf berhasil ditambahkan','success')">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah Tugas -->
+<div class="modal-overlay" id="modal-tambah-tugas">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Tugas Baru</div>
+      <button class="modal-close" onclick="closeModal('modal-tambah-tugas')">✕</button>
+    </div>
+    <div class="form-group"><label>Judul Tugas</label><input placeholder="Deskripsi tugas singkat..."></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Ditugaskan Ke</label><select><option>Ahmad Husain</option><option>Dewi Maharani</option><option>Rudi Hartono</option><option>Siti Aminah</option><option>Admin</option></select></div>
+      <div class="form-group"><label>Prioritas</label><select><option>Normal</option><option>Tinggi</option><option>Darurat</option></select></div>
+      <div class="form-group"><label>Tenggat</label><input type="date"></div>
+      <div class="form-group"><label>Kasus Terkait</label><select><option>-- Tidak ada --</option><option>K-2025-047</option><option>K-2025-046</option></select></div>
+    </div>
+    <div class="form-group"><label>Catatan</label><textarea placeholder="Detail tambahan..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tambah-tugas')">Batal</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-tambah-tugas');showToast('Tugas berhasil ditambahkan','success')">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail Kasus -->
+<div class="modal-overlay" id="modal-detail-kasus">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="detail-kasus-no">K-2025-047</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">PT Maju Bersama · Perdata</div>
+      </div>
+      <div class="gap-2">
+        <button class="btn btn-outline btn-sm">✏ Edit</button>
+        <button class="modal-close" onclick="closeModal('modal-detail-kasus')">✕</button>
+      </div>
+    </div>
+    <div class="two-col" style="margin-bottom:0">
+      <div>
+        <div class="section-title" style="margin-bottom:12px">Informasi Kasus</div>
+        <div style="display:grid;gap:8px;font-size:13px">
+          <div class="flex-between"><span style="color:var(--text-muted)">Status</span><span class="badge badge-aktif">Aktif</span></div>
+          <div class="flex-between"><span style="color:var(--text-muted)">Pengacara</span><span class="fw-600">Ahmad Husain, S.H.</span></div>
+          <div class="flex-between"><span style="color:var(--text-muted)">Pengadilan</span><span>PN Jakarta Pusat</span></div>
+          <div class="flex-between"><span style="color:var(--text-muted)">Tanggal Masuk</span><span>1 Mar 2025</span></div>
+          <div class="flex-between"><span style="color:var(--text-muted)">Sidang Berikut</span><span class="fw-600" style="color:var(--danger)">14 Mar 2025</span></div>
+          <div class="flex-between"><span style="color:var(--text-muted)">Honor</span><span class="fw-600">Rp 35.000.000</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-title" style="margin-bottom:12px">Dokumen Terkait</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span>📄</span> Surat Gugatan.pdf <button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span>📝</span> Kontrak Jasa.docx <button class="btn btn-outline btn-sm" style="margin-left:auto">↓</button></div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title" style="margin-bottom:12px">Timeline Kasus</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"></div>
+            <div class="timeline-title">Penerimaan Mandat</div>
+            <div class="timeline-date">1 Mar 2025</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done"></div>
+            <div class="timeline-title">Pendaftaran Gugatan ke PN</div>
+            <div class="timeline-date">5 Mar 2025</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Mediasi Pertama</div>
+            <div class="timeline-date">14 Mar 2025</div>
+            <div class="timeline-desc">Mediasi wajib sebelum sidang pokok</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">Sidang Pemeriksaan</div>
+            <div class="timeline-date">TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-detail-kasus')">Tutup</button>
+      <button class="btn btn-gold" onclick="navigate('keuangan', document.querySelector('[onclick*=keuangan]'));closeModal('modal-detail-kasus')">💰 Buat Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ── NAVIGATION ──
+function navigate(page, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = {
+    dashboard: 'Dasbor', kasus: 'Manajemen Kasus', klien: 'Data Klien',
+    jadwal: 'Jadwal & Sidang', dokumen: 'Arsip Dokumen', keuangan: 'Keuangan',
+    honorarium: 'Honorarium', staf: 'Staf & Pengacara', tugas: 'Tugas',
+    laporan: 'Laporan', pengaturan: 'Pengaturan'
+  }[page] || page;
+  if (window.innerWidth < 900) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── SIDEBAR TOGGLE ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── MODAL ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ── DETAIL KASUS ──
+function openKasusDetail(no) {
+  document.getElementById('detail-kasus-no').textContent = no;
+  openModal('modal-detail-kasus');
+}
+
+// ── SIMPAN KASUS ──
+function simpanKasus() {
+  closeModal('modal-tambah-kasus');
+  showToast('Kasus K-2025-048 berhasil ditambahkan!', 'success');
+  document.getElementById('kasus-badge').textContent = '13';
+}
+
+// ── TABS ──
+function switchTab(el, id) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ── NOTIF ──
+function showNotif() {
+  showToast('3 jadwal sidang minggu ini, 1 invoice jatuh tempo');
+}
+
+// ── CHECKBOX TASKS ──
+document.addEventListener('change', e => {
+  if (e.target.type === 'checkbox' && e.target.closest('#tugas-list')) {
+    const row = e.target.closest('.panel');
+    if (e.target.checked) {
+      row.style.opacity = '.6';
+      row.querySelector('.fw-600').style.textDecoration = 'line-through';
+      showToast('Tugas ditandai selesai', 'success');
+    } else {
+      row.style.opacity = '1';
+      row.querySelector('.fw-600').style.textDecoration = '';
+    }
+  }
+});
+</script>
+</body>
+</html>
